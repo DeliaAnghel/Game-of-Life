@@ -1,5 +1,7 @@
 #include<stdio.h>
 #include<stdlib.h>
+#include "task1.h"
+#include "task2.h"
 
 //functie de alocare spatiu pentru matrice
 char **alocare_spatiu_matrice( int N, int M)
@@ -25,46 +27,6 @@ char **alocare_spatiu_matrice( int N, int M)
         
 }
 
-//functie care numara vecinii vii ai unei celule
-//t si v sunt coordonatele
-void numarare_vecini_vii(char **tabla, int i, int j, int *celule_vii, int N, int M)
-{
-    int t, v;
-    for (t = -1; t <= 1; t++)
-    {
-        if (i + t >= 0 && i + t < N)
-        for (v = -1; v <= 1; v++)
-        {
-            if(j + v >= 0 && j + v < M)
-                if ( tabla[i+t][j+v] == 'X' && (t != 0 || v != 0) )
-                (*celule_vii)++;
-        }
-    }
-}
-
-//functie care copiaza elementele din tablaOut in tabla
-void copy(char **tabla, char **tablaOut, int N, int M)
-{
-    int i, j;
-    for (i = 0; i < N; i++)
-        for (j = 0; j < M; j++)
-            tabla[i][j] = tablaOut[i][j];
-
-}
-
-//functie afisare tabla
-void afisare(char **tabla, int N, int M, FILE *fisier)
-{
-    for (int i = 0; i < N; i++)
-    {
-        for(int j = 0; j < M; j++)
-        fprintf(fisier, "%c", tabla[i][j]);
-
-        fprintf(fisier, "\n");
-    }
-    fprintf(fisier, "\n");
-}
-
 //eliberare spatiu matrice
 void eliberare(char **tabla, int N)
 {
@@ -74,10 +36,40 @@ void eliberare(char **tabla, int N)
     free(tabla);
 }
 
+//stergere lista
+void deleteList(Node **head)
+{
+    Node * headcopy ;
+    while (*head != NULL)
+    {
+        headcopy = (*head)->next;
+        free (*head);
+        *head = headcopy ; 
+    }
+    *head = NULL ;
+}
+
+//stergere stiva
+void deleteStack(Stack **top)
+{
+    while ((*top) != NULL )
+    { 
+        Stack *temp;
+        temp = *top;
+        deleteList(&((*top)->Generatie));
+        *top =(*top)->nextGen ;
+        free(temp);
+    }
+}
+
+//T numarul testului
+//N numarul randurilor
+//M numarul coloanelor
+//K numarul generatiilor de calculat
 int main(int argc, const char* argv[])
 { int T, N, M, K, generatie, i, j;
     char **tabla;
-    if(argc < 3)
+    if (argc < 3)
     {
         printf("Utilizare: %s fisier1.in fisier2.in ....\n", argv[0]);
         return 1;
@@ -87,6 +79,16 @@ int main(int argc, const char* argv[])
     FILE* fisier_iesire;
     fisier_intrare = fopen(argv[1], "rt");
     fisier_iesire = fopen(argv[2], "wt");
+    if (fisier_intrare == NULL)
+    {
+        printf("Eroare la deschiderea fisierului!\n");
+        exit(1);
+    }
+    if (fisier_iesire == NULL)
+    {
+        printf("Eroare la deschiderea fisierului!\n");
+        exit(1);
+    }
 
     //citire din fisierul de intrare
     fscanf(fisier_intrare, "%d", &T);
@@ -102,47 +104,57 @@ int main(int argc, const char* argv[])
     char **tablaOut;
     tablaOut = alocare_spatiu_matrice(N, M);
 
-    afisare(tabla, N, M, fisier_iesire);
-
-    int celule_vii = 0;
-    char viu = 'X', mort = '+';
-    for (generatie = 0; generatie < K; generatie++)
+    if (T == 1) calculare_generatie(tabla, tablaOut, K, N, M, fisier_iesire);
+    else if (T == 2)
     {
-        
-        for (i = 0; i < N; i++)
+        Stack *stackTop = NULL;
+        int celule_vii = 0;
+        char viu = 'X', mort = '+';
+
+        for(generatie = 0; generatie < K; generatie++)
         {
-            for (j = 0; j < M; j++)
+            //creez o noua lista pentru fiecare generatie;
+            Node *head = NULL;
+
+            for (i = 0; i < N; i++)
             {
-                if (tabla[i][j] == viu)
+                for (j = 0; j < M; j++)
                 {
-                    numarare_vecini_vii(tabla, i, j, &celule_vii, N, M);
-                    if (celule_vii < 0 || celule_vii > 8)
-                            printf("Eroare");
-                        else if (celule_vii < 2 || celule_vii > 3)
+                    if (tabla[i][j] == viu)
+                    {
+                        numarare_vecini_vii(tabla, i, j, &celule_vii, N, M);
+                        if (celule_vii < 2 || celule_vii > 3)
+                        {
                             tablaOut[i][j] = mort;
-                        else tablaOut[i][j] = viu;
+                            addAtEnd (&head, i, j);
+                            
+                        }else tablaOut[i][j] = viu;
 
-                }
-                else if (tabla[i][j] == mort)
-                {
-                    numarare_vecini_vii(tabla, i, j, &celule_vii, N, M);
-                    if (celule_vii < 0 || celule_vii > 8)
-                            printf("Eroare");
-                    else if (celule_vii == 3)
-                        tablaOut[i][j] = viu;
-                    else tablaOut[i][j] = mort;
-                }
-                celule_vii = 0;
 
+                    }
+                    else if (tabla[i][j] == mort)
+                    {
+                        numarare_vecini_vii(tabla, i, j, &celule_vii, N, M);
+                        if (celule_vii == 3)
+                        {
+                            tablaOut[i][j] = viu;
+                            addAtEnd (&head , i, j);
+                            
+                        }else tablaOut[i][j] = mort;
+                    }
+                    celule_vii = 0;
+                }
             }
-        }
-        afisare(tablaOut, N, M, fisier_iesire);
-        copy(tabla, tablaOut, N, M);
-    }
+            copy(tabla, tablaOut, N, M);
 
-    eliberare(tabla, N);
-    eliberare(tablaOut, N);
+            //introduc lista in stiva
+            push (&stackTop , head, generatie + 1);
+        } 
+        printStack(stackTop, fisier_iesire);
+        deleteStack(&stackTop);
+    }
     
+    eliberare(tablaOut, N);
+    eliberare(tabla, N);
     fclose(fisier_iesire); 
 }
-
