@@ -2,72 +2,14 @@
 #include<stdlib.h>
 #include "task1.h"
 #include "task2.h"
-
-//functie de alocare spatiu pentru matrice
-char **alocare_spatiu_matrice( int N, int M)
-{
-    char **tabla;
-    tabla = (char**)malloc(N * sizeof(char*));
-    if (tabla == NULL)
-    {
-        printf("Alocare esuata!");
-        exit(1);
-    }
-
-    for (int i = 0; i < N; i++)
-    {
-        tabla[i] = (char*)malloc(M * sizeof(char));
-        if (tabla[i] == NULL)
-        {
-            printf("Alocare esuata!");
-            exit(1);
-        }
-    }
-    return tabla;
-        
-}
-
-//eliberare spatiu matrice
-void eliberare(char **tabla, int N)
-{
-    int i;
-    for (i = 0; i < N; i++)
-        free(tabla[i]);
-    free(tabla);
-}
-
-//stergere lista
-void deleteList(Node **head)
-{
-    Node * headcopy ;
-    while (*head != NULL)
-    {
-        headcopy = (*head)->next;
-        free (*head);
-        *head = headcopy ; 
-    }
-    *head = NULL ;
-}
-
-//stergere stiva
-void deleteStack(Stack **top)
-{
-    while ((*top) != NULL )
-    { 
-        Stack *temp;
-        temp = *top;
-        deleteList(&((*top)->Generatie));
-        *top =(*top)->nextGen ;
-        free(temp);
-    }
-}
+#include "task3.h"
 
 //T numarul testului
 //N numarul randurilor
 //M numarul coloanelor
 //K numarul generatiilor de calculat
 int main(int argc, const char* argv[])
-{ int T, N, M, K, generatie, i, j;
+{int T, N, M, K, generatie, i, j;
     char **tabla;
     if (argc < 3)
     {
@@ -152,6 +94,16 @@ int main(int argc, const char* argv[])
         } 
         printStack(stackTop, fisier_iesire);
         deleteStack(&stackTop);
+    }else if (T == 3)
+    {
+        Elem *root = NULL;
+        Node *lista_gen0 = NULL;
+        int gen = 0;
+        lista_gen0 = initTree( tabla, N, M);
+        root = task3 (lista_gen0, gen, K, tabla, N, M, fisier_iesire);
+        afisare_arbore(root, gen, K, tabla, N, M, fisier_iesire );
+        delete_tree(root);
+
     }
     
     eliberare(tablaOut, N);

@@ -71,3 +71,29 @@ void printStack(Stack* top, FILE *fisier_iesire)
         fprintf(fisier_iesire, "\n");
     }
 }
+
+//stergere lista
+void deleteList(Node **head)
+{
+    Node * headcopy ;
+    while (*head != NULL)
+    {
+        headcopy = (*head)->next;
+        free (*head);
+        *head = headcopy ; 
+    }
+    *head = NULL ;
+}
+
+//stergere stiva
+void deleteStack(Stack **top)
+{
+    while ((*top) != NULL )
+    { 
+        Stack *temp;
+        temp = *top;
+        deleteList(&((*top)->Generatie));
+        *top =(*top)->nextGen;
+        free(temp);
+    }
+}

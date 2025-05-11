@@ -1,5 +1,38 @@
 #include "task1.h"
 
+//functie de alocare spatiu pentru matrice
+char **alocare_spatiu_matrice( int N, int M)
+{
+    char **tabla;
+    tabla = (char**)malloc(N * sizeof(char*));
+    if (tabla == NULL)
+    {
+        printf("Alocare esuata!");
+        exit(1);
+    }
+
+    for (int i = 0; i < N; i++)
+    {
+        tabla[i] = (char*)malloc(M * sizeof(char));
+        if (tabla[i] == NULL)
+        {
+            printf("Alocare esuata!");
+            exit(1);
+        }
+    }
+    
+    return tabla;  
+}
+
+//eliberare spatiu matrice
+void eliberare(char **tabla, int N)
+{
+    int i;
+    for (i = 0; i < N; i++)
+        free(tabla[i]);
+    free(tabla);
+}
+
 //functie care numara vecinii vii ai unei celule
 //t si v sunt coordonatele unei celule
 void numarare_vecini_vii(char **tabla, int i, int j, int *celule_vii, int N, int M)
