@@ -39,7 +39,7 @@ Node* regula_B(char **tabla, char **tablaB, int N, int M)
     return head;
 }
 
-// implicare a regulii standard
+// implementare a regulii standard
 Node* regula_standard(char **tabla, char **tabla_standard, int N, int M)
 {
     int celule_vii = 0, i, j;

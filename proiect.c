@@ -3,6 +3,7 @@
 #include "task1.h"
 #include "task2.h"
 #include "task3.h"
+#include "task4.h"
 
 //T numarul testului
 //N numarul randurilor
@@ -101,7 +102,17 @@ int main(int argc, const char* argv[])
         int gen = 0;
         lista_gen0 = initTree( tabla, N, M);
         root = task3 (lista_gen0, gen, K, tabla, N, M, fisier_iesire);
-        afisare_arbore(root, gen, K, tabla, N, M, fisier_iesire );
+        afisare_arbore(root, gen, K, tabla, N, M, fisier_iesire);
+        delete_tree(root);
+
+    }else if (T == 4)
+    {    
+        Elem *root = NULL;
+        Node *lista_gen0 = NULL;
+        int gen = 0;
+        lista_gen0 = initTree( tabla, N, M);
+        root = task3 (lista_gen0, gen, K, tabla, N, M, fisier_iesire);
+        task4(root, gen, K, tabla, N, M, fisier_iesire);
         delete_tree(root);
 
     }
