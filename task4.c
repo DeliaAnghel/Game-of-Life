@@ -49,7 +49,7 @@ void createGraph(Graph *g, int n, int m, char **tabla)
         }
     }
     g->varfuri = size;
-    //fc de creare a matricei de adiacenta!!!
+    
     g->mAdiacenta = alocare_spatiu_matriceInt(size, size);
     if ( g->mAdiacenta == NULL)
         {
@@ -76,7 +76,7 @@ void createGraph(Graph *g, int n, int m, char **tabla)
             }
         }
     }
-    //return g;
+    
 }
 
 //fc de eliberare a matricei de adiacenta
@@ -115,8 +115,6 @@ int *drum_Hamilton( int size, int **a, int vizitat[], int path[], int depth, int
 }
 
 //gasirea posibilelor drumuri Hamilton
-//aici trebuie sa creez lista de coordonate si cate sunt
-//nu iti face griji ca nu mai ai coordonatele celulelor vii dar le ai in graf!!! nu uita!!
 void DFS_scan( Graph *g, int visited[] , int i, Coordonate *c, int *size, int *count){
     int j, grad = 0;
     for (j = 0; j < g->varfuri; j++)
@@ -128,7 +126,7 @@ void DFS_scan( Graph *g, int visited[] , int i, Coordonate *c, int *size, int *c
     c[*size].linie = g->coord_celuleVii[i].linie;
     c[*size].coloana = g->coord_celuleVii[i].coloana;
     (*size)++;
-    //addAtEnd(&head , g->coord_celuleVii[i].linie, g->coord_celuleVii[i].coloane);
+
 
     for (j = 0; j < g->varfuri; j++){
         if (g->mAdiacenta[i][j] == 1 && visited[j] == 0)
@@ -160,7 +158,7 @@ void DFS( Graph *g, FILE *fisier){
             //count numara cate elemente din graful conex au grad=1
             if (count <= 2){
                 
-                //am gasit componenta conexa acum ii fac matr de adiacenta
+                //am gasit componenta conexa acum ii fac matricea de adiacenta
                 int **a = alocare_spatiu_matriceInt(size, size);
                 for (int I = 0; I < size - 1; I++)
                 for (int j = I + 1; j < size; j++){
@@ -169,7 +167,7 @@ void DFS( Graph *g, FILE *fisier){
                         a[I][j] = a[j][I] = 1;
                 }
 
-                //cu backtracking ii aflu daca e un posibil drum Hamilton sau nu
+                //cu backtracking aflu daca e un posibil drum Hamilton sau nu
                 int *bestPath = (int*)calloc(size, sizeof(int));
                 for(int j = 0; j < size; j++){
                     int *vizitat = (int*)calloc(size, sizeof(int));
@@ -266,7 +264,7 @@ void task4(Elem *root, int generatie, int K, char **tabla, int N, int M, FILE *f
         eliberare_mInt(g->mAdiacenta, g->varfuri);
         free(g);
 
-        //afisare pe stanga
+        //merg pe stanga
         if(root->left != NULL)
         {
             char **tablaB;
@@ -282,7 +280,7 @@ void task4(Elem *root, int generatie, int K, char **tabla, int N, int M, FILE *f
             eliberare(tablaB, N);
         }
 
-        //afisare pe dreapta
+        //merg pe dreapta
         if(root->right != NULL)
         {
             char **tabla_standard;
